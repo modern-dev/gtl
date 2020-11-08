@@ -1,0 +1,7 @@
+package gtl
+
+import "errors"
+
+var (
+	OutOfRangeError = errors.New("out of range")
+)

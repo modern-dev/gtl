@@ -1,0 +1,13 @@
+package gtl
+
+func Min[T Ordered](a T, items ...T) T {
+	res := a
+
+	for _, item := range items {
+		if item < res {
+			res = item
+		}
+	}
+
+	return res
+}
