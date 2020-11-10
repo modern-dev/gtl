@@ -1,0 +1,120 @@
+package gtl
+
+// Deque Basic Generic deque (double-ended queue) implementation based on double-linked list
+type Deque[T any] struct {
+	head   *dequeNode[T]
+	tail   *dequeNode[T]
+	length int
+}
+
+// dequeNode is a generic double-linked list node
+// use for Deque implementation
+type dequeNode[T any] struct {
+	Value T
+	Next  *dequeNode[T]
+	Prev  *dequeNode[T]
+}
+
+// NewDeque creates empty Deque and returns pointer to created instance
+func NewDeque[T any]() *Deque[T] {
+	return &Deque[T]{}
+}
+
+// IsEmpty checks if Deque has no element
+func (d *Deque[T]) IsEmpty() bool {
+	return d.length == 0
+}
+
+// NotEmpty checks if Deque has elements
+func (d *Deque[T]) NotEmpty() bool {
+	return !d.IsEmpty()
+}
+
+// Size returns the number of elements in Deque
+// Complexity - O(1).
+func (d *Deque[T]) Size() int {
+	return d.length
+}
+
+// EnqueueBack adds element to the end of Deque
+// Complexity - O(1).
+func (d *Deque[T]) EnqueueBack(element T) {
+	node := &dequeNode[T]{Value: element, Next: nil, Prev: nil}
+
+	if d.IsEmpty() {
+		d.insertIntoEmpty(node)
+		return
+	}
+
+	d.tail.Next = node
+	node.Prev = d.tail
+	d.tail = node
+	d.length++
+}
+
+// EnqueueFront adds element before first element of Deque
+// Complexity - O(1).
+func (d *Deque[T]) EnqueueFront(element T) {
+	node := &dequeNode[T]{Value: element, Next: nil, Prev: nil}
+
+	if d.IsEmpty() {
+		d.insertIntoEmpty(node)
+		return
+	}
+
+	d.head.Prev = node
+	node.Next = d.head
+	d.head = node
+	d.length++
+	return
+}
+
+// DequeueBack returns and removes the last element from Deque
+// Complexity - O(1).
+func (d *Deque[T]) DequeueBack() T {
+	if d.IsEmpty() {
+		panic(OutOfRangeError)
+	}
+
+	if d.tail == nil {
+		value := d.head.Value
+		d.reset()
+		return value
+	}
+
+	value := d.tail.Value
+	d.tail = d.tail.Prev
+	d.length--
+	return value
+}
+
+// DequeueFront returns and removes the first element from Deque
+// Complexity - O(1).
+func (d *Deque[T]) DequeueFront() T {
+	if d.IsEmpty() {
+		panic(OutOfRangeError)
+	}
+
+	if d.head == nil {
+		value := d.tail.Value
+		d.reset()
+		return value
+	}
+
+	value := d.head.Value
+	d.head = d.head.Next
+	d.length--
+	return value
+}
+
+func (d *Deque[T]) insertIntoEmpty(node *dequeNode[T]) {
+	d.tail = node
+	d.head = node
+	d.length++
+}
+
+func (d *Deque[T]) reset() {
+	d.tail = nil
+	d.head = nil
+	d.length = 0
+}

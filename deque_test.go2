@@ -1,0 +1,117 @@
+package gtl
+
+import (
+	"testing"
+)
+
+const enqueuesCount = 200
+
+func TestNewDeque(t *testing.T) {
+	structDeque := NewDeque[struct{}]()
+	intDeque := NewDeque[int]()
+	sliceDeque := NewDeque[[]float64]()
+
+	checkDequeSize(structDeque, 0, t)
+	checkDequeSize(intDeque, 0, t)
+	checkDequeSize(sliceDeque, 0, t)
+}
+
+func TestEnqueueFront(t *testing.T) {
+	d := NewDeque[int]()
+
+	for i := 0; i < enqueuesCount; i++ {
+		d.EnqueueFront(i)
+		checkDequeSize(d, i+1, t)
+	}
+}
+
+func TestEnqueueBack(t *testing.T) {
+	d := NewDeque[int]()
+
+	for i := 0; i < enqueuesCount; i++ {
+		d.EnqueueBack(i)
+		checkDequeSize(d, i+1, t)
+	}
+}
+
+func TestDequeueFront(t *testing.T) {
+	d := NewDeque[int]()
+
+	d.EnqueueFront(1)
+	el := d.DequeueFront()
+
+	checkDequeSize(d, 0, t)
+	if el != 1 {
+		t.Errorf("Expected to get %d, got %d", 1, el)
+	}
+}
+
+func TestDequeueBack(t *testing.T) {
+	d := NewDeque[int]()
+
+	d.EnqueueFront(1)
+	el := d.DequeueBack()
+
+	checkDequeSize(d, 0, t)
+	if el != 1 {
+		t.Errorf("Expected to get %d, got %d", 1, el)
+	}
+}
+
+func TestDequeueFrontPanicOnEmpty(t *testing.T) {
+	assertPanic(func() {
+		d := NewDeque[int]()
+		d.DequeueFront()
+	}, OutOfRangeError, t)
+}
+
+func TestDequeueBackPanicOnEmpty(t *testing.T) {
+	assertPanic(func() {
+		d := NewDeque[int]()
+		d.DequeueBack()
+	}, OutOfRangeError, t)
+}
+
+func TestDeque(t *testing.T) {
+	d := NewDeque[int]()
+
+	for i := 0; i < enqueuesCount/2; i++ {
+		d.EnqueueFront(i)
+	}
+
+	checkDequeSize(d, enqueuesCount/2, t)
+
+	for i := enqueuesCount / 2; i < enqueuesCount; i++ {
+		d.EnqueueBack(i)
+	}
+
+	checkDequeSize(d, enqueuesCount, t)
+
+	if d.NotEmpty() != true {
+		t.Errorf("Deque should not be empty")
+	}
+
+	for i := enqueuesCount; i > 0; i-- {
+		d.DequeueFront()
+	}
+
+	if d.IsEmpty() != true {
+		t.Errorf("Deque should be empty")
+	}
+}
+
+func assertPanic(blockFn func(), err error, t *testing.T) {
+	defer func() {
+		if r := recover(); r != err {
+			t.Errorf("The code did not panic with %s", err.Error())
+		}
+	}()
+
+	blockFn()
+}
+
+func checkDequeSize[P any](deque *Deque[P], expected int, t *testing.T) {
+	if deque.Size() != expected {
+		t.Errorf("Deque should have size %d but got %d", expected, deque.Size())
+	}
+}
