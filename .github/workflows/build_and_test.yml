@@ -1,0 +1,23 @@
+name: Build & Test workflow
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build_test:
+    runs-on: ubuntu-latest
+    container: virtyaluk/go2go:latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run build & test
+        run: |
+          go2 build
+          go2 test
