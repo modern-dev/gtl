@@ -1,0 +1,109 @@
+package gtl
+
+import (
+	"testing"
+)
+
+const addsCount = 3000
+
+func TestNewSet(t *testing.T) {
+	s := NewSet[int]()
+
+	checkSize(s, 0, t)
+	checkIsEmpty(s, true, t)
+}
+
+func TestAdd(t *testing.T) {
+	s := NewSet[int]()
+
+	checkSet[int](s, 0, true, t)
+	for i := 0; i < addsCount; i++ {
+		s.Add(i)
+		checkSet[int](s, i+1, false, t)
+	}
+}
+
+func TestIsEmpty(t *testing.T) {
+	s := NewSet[int]()
+
+	checkIsEmpty[int](s, true, t)
+
+	s.Add(1)
+	s.Add(42)
+
+	checkIsEmpty[int](s, false, t)
+}
+
+func TestNotEmpty(t *testing.T) {
+	s := NewSet[int]()
+
+	checkNotEmpty[int](s, false, t)
+
+	s.Add(0)
+	s.Add(35)
+
+	checkNotEmpty[int](s, true, t)
+}
+
+func TestContains(t *testing.T) {
+	s := NewSet[int]()
+
+	checkSet[int](s, 0, true, t)
+
+	for i := 0; i < addsCount/2; i = i + 2 {
+		s.Add(i)
+
+		if s.Contains(i) != true {
+			t.Errorf("Expected set to contain %d", i)
+		}
+
+		if s.Contains(i+1) == true {
+			t.Errorf("Expected set to not contain %d", i+1)
+		}
+	}
+}
+
+func TestDelete(t *testing.T) {
+	s := NewSet[int]()
+
+	for i := 0; i < addsCount; i++ {
+		s.Add(i)
+	}
+
+	checkSet[int](s, addsCount, false, t)
+
+	for i := 0; i < addsCount; i++ {
+		checkSet[int](s, addsCount-i, false, t)
+		s.Delete(i)
+	}
+
+	checkSet[int](s, 0, true, t)
+
+	for i := 0; i < addsCount; i++ {
+		checkSet[int](s, 0, true, t)
+		s.Delete(i)
+	}
+}
+
+func checkSet[T comparable](s *Set[T], size int, isEmpty bool, t *testing.T) {
+	checkSize(s, size, t)
+	checkIsEmpty(s, isEmpty, t)
+}
+
+func checkSize[T comparable](s *Set[T], size int, t *testing.T) {
+	if size != s.Size() {
+		t.Errorf("Expected set size %d, got %d", size, s.Size())
+	}
+}
+
+func checkIsEmpty[T comparable](s *Set[T], isEmpty bool, t *testing.T) {
+	if isEmpty != s.IsEmpty() {
+		t.Errorf("Expected IsEmpty to be %v, got %v", isEmpty, s.IsEmpty())
+	}
+}
+
+func checkNotEmpty[T comparable](s *Set[T], notEmpty bool, t *testing.T) {
+	if notEmpty != s.NotEmpty() {
+		t.Errorf("Expected NotEmpty to be %v, got %v", notEmpty, s.NotEmpty())
+	}
+}
