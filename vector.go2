@@ -51,7 +51,14 @@ func (v *Vector[T]) Back() T {
 	return (*v)[v.Size() - 1]
 }
 
-// PopBack() T
+func (v *Vector[T]) PopBack() T {
+	res := v.Back()
+
+	*v = (*v)[:v.Size() - 1]
+
+	return res
+}
+
 // Pop(pos int) T
 // Erase(pos int)
 // Insert(pos int, el T)
