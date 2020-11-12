@@ -1,7 +1,7 @@
 package gtl
 
-func Min[T Ordered](a T, items ...T) T {
-	res := a
+func Min[T Ordered](items ...T) T {
+	res := items[0]
 
 	for _, item := range items {
 		if item < res {
@@ -11,3 +11,25 @@ func Min[T Ordered](a T, items ...T) T {
 
 	return res
 }
+
+func Sum[T Numeric](items ...T) T {
+	var res T
+
+	for _, item := range items {
+		res += item
+	}
+
+	return res
+}
+
+// Abs(x)
+// All(iterable)
+// Min(iterable)
+// Any(iterable)
+// Filter(function, iterable)
+// Pow(base, exp[, mod])
+// Map(function, iterable, ...)
+// Reversed()
+// Max(iterable)
+// Divmod(a, b) => a // b, a % b
+// Zip ??
