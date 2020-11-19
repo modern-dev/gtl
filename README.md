@@ -39,7 +39,7 @@ For a complete guide to contributing to GTL, see the [Contribution Guide](https:
 
 Copyright 2020. The GTL Authors. All rights reserved.
 
-Licensed and the [MIT license](https://raw.githubusercontent.com/modern-dev/gtl/master/LICENSE).
+Licensed under the [MIT license](https://raw.githubusercontent.com/modern-dev/gtl/master/LICENSE).
 
 [Gopher artwork by Ashley McNamara](https://github.com/ashleymcnamara/gophers) licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
