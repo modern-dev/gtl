@@ -1,0 +1,53 @@
+// Copyright 2020. The GTL Authors. All rights reserved.
+// https://github.com/modern-dev/gtl
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+
+package gtl
+
+// Queue is a container adapter that gives the programmer the functionality of a queue
+// - specifically, a FIFO (first-in, first-out) data structure.
+type Queue[T any] struct {
+	deque *Deque[T]
+}
+
+// NewQueue creates new empty Queue of given type
+func NewQueue[T any]() *Queue[T] {
+	return &Queue[T]{deque: NewDeque[T]()}
+}
+
+// Len returns number of elements in queue
+// Complexity O(1)
+func (q *Queue[T]) Len() int {
+	return q.deque.Len()
+}
+
+// IsEmpty checks if Queue has no element
+// Complexity O(1)
+func (q *Queue[T]) IsEmpty() bool {
+	return q.deque.IsEmpty()
+}
+
+// NotEmpty checks if Queue has elements
+// Complexity O(1)
+func (q *Queue[T]) NotEmpty() bool {
+	return q.deque.NotEmpty()
+}
+
+// Peek returns value of the first element in Queue
+// Complexity O(1)
+func (q *Queue[T]) Peek() T {
+	return q.deque.Front()
+}
+
+// Enqueue add element in front of queue
+// Complexity O(1)
+func (q *Queue[T]) Enqueue(element T) {
+	q.deque.EnqueueFront(element)
+}
+
+// Enqueue removes and returns first element of queue
+// Complexity O(1)
+func (q *Queue[T]) Dequeue() T {
+	return q.deque.DequeueFront()
+}

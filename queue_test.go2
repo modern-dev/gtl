@@ -1,0 +1,76 @@
+package gtl
+
+import "testing"
+
+const queueEnqueuesCount = 300
+
+func TestNewQueue(t *testing.T) {
+	structQueue := NewQueue[struct{}]()
+	intQueue := NewQueue[int]()
+	sliceQueue := NewQueue[[]float64]()
+
+	checkQueueSize(structQueue, 0, t)
+	checkQueueSize(intQueue, 0, t)
+	checkQueueSize(sliceQueue, 0, t)
+}
+
+func TestEnqueue(t *testing.T) {
+	queue := NewQueue[int]()
+
+	for i := 0; i < queueEnqueuesCount; i++ {
+		queue.Enqueue(i)
+		checkQueueSize(queue, i+1, t)
+	}
+}
+
+func TestDequeue(t *testing.T) {
+	queue := NewQueue[int]()
+
+	queue.Enqueue(1)
+	el := queue.Dequeue()
+
+	checkQueueSize(queue, 0, t)
+	if el != 1 {
+		t.Errorf("Expected to get %d, got %d", 1, el)
+	}
+}
+
+func TestPeek(t *testing.T) {
+	queue := NewQueue[int]()
+
+	queue.Enqueue(1)
+	el := queue.Peek()
+
+	checkQueueSize(queue, 1, t)
+	if el != 1 {
+		t.Errorf("Expected to get %d, got %d", 1, el)
+	}
+}
+
+func TestQueue(t *testing.T) {
+	queue := NewQueue[float64]()
+
+	for i := 0; i < queueEnqueuesCount; i++ {
+		queue.Enqueue(float64(i))
+	}
+
+	checkQueueSize(queue, queueEnqueuesCount, t)
+
+	if queue.NotEmpty() != true {
+		t.Errorf("Queue should not be empty")
+	}
+
+	for i := queueEnqueuesCount; i > 0; i-- {
+		queue.Dequeue()
+	}
+
+	if queue.IsEmpty() != true {
+		t.Errorf("Deque should be empty")
+	}
+}
+
+func checkQueueSize[T any](queue *Queue[T], expected int, t *testing.T) {
+	if queue.Len() != expected {
+		t.Errorf("Queue should have size %d but got %d", expected, queue.Len())
+	}
+}

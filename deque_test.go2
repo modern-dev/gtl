@@ -63,17 +63,69 @@ func TestDequeueBack(t *testing.T) {
 	}
 }
 
-func TestDequeueFrontPanicOnEmpty(t *testing.T) {
+func TestDequeueFrontDequeuePanicOnEmpty(t *testing.T) {
 	assertPanic(func() {
 		d := NewDeque[int]()
 		d.DequeueFront()
 	}, OutOfRangeError, t)
 }
 
-func TestDequeueBackPanicOnEmpty(t *testing.T) {
+func TestDequeueDequeueBackPanicOnEmpty(t *testing.T) {
 	assertPanic(func() {
 		d := NewDeque[int]()
 		d.DequeueBack()
+	}, OutOfRangeError, t)
+}
+
+func TestDequeFront(t *testing.T) {
+	d := NewDeque[string]()
+
+	d.EnqueueBack("string")
+
+	value := d.Front()
+	if value != "string" {
+		t.Errorf("Expected to get %s, got %s", "string", value)
+	}
+
+	d.EnqueueBack("value")
+	d.EnqueueFront("front")
+
+	value = d.Front()
+	if value != "front" {
+		t.Errorf("Expected to get %s, got %s", "front", value)
+	}
+}
+
+func TestDequeBack(t *testing.T) {
+	d := NewDeque[string]()
+
+	d.EnqueueBack("string")
+
+	value := d.Back()
+	if value != "string" {
+		t.Errorf("Expected to get %s, got %s", "string", value)
+	}
+
+	d.EnqueueBack("value")
+	d.EnqueueFront("front")
+
+	value = d.Back()
+	if value != "value" {
+		t.Errorf("Expected to get %s, got %s", "value", value)
+	}
+}
+
+func TestDequeueBackPanicOnEmpty(t *testing.T) {
+	assertPanic(func() {
+		d := NewDeque[int]()
+		d.Back()
+	}, OutOfRangeError, t)
+}
+
+func TestDequeueFrontPanicOnEmpty(t *testing.T) {
+	assertPanic(func() {
+		d := NewDeque[int]()
+		d.Front()
 	}, OutOfRangeError, t)
 }
 
@@ -116,7 +168,7 @@ func assertPanic(blockFn func(), err error, t *testing.T) {
 }
 
 func checkDequeSize[P any](deque *Deque[P], expected int, t *testing.T) {
-	if deque.Size() != expected {
-		t.Errorf("Deque should have size %d but got %d", expected, deque.Size())
+	if deque.Len() != expected {
+		t.Errorf("Deque should have size %d but got %d", expected, deque.Len())
 	}
 }
