@@ -35,9 +35,9 @@ func (d *Deque[T]) NotEmpty() bool {
 	return !d.IsEmpty()
 }
 
-// Size returns the number of elements in Deque
+// Len returns the number of elements in Deque
 // Complexity - O(1).
-func (d *Deque[T]) Size() int {
+func (d *Deque[T]) Len() int {
 	return d.length
 }
 
@@ -110,6 +110,34 @@ func (d *Deque[T]) DequeueFront() T {
 	d.head = d.head.Next
 	d.length--
 	return value
+}
+
+// Front returns values of the first element in Deque
+// Complexity - O(1).
+func (d *Deque[T]) Front() T {
+	if d.IsEmpty() {
+		panic(OutOfRangeError)
+	}
+
+	if d.head == nil {
+		return d.tail.Value
+	}
+
+	return d.head.Value
+}
+
+// Back returns values of the last element in Deque
+// Complexity - O(1).
+func (d *Deque[T]) Back() T {
+	if d.IsEmpty() {
+		panic(OutOfRangeError)
+	}
+
+	if d.tail == nil {
+		return d.head.Value
+	}
+
+	return d.tail.Value
 }
 
 func (d *Deque[T]) insertIntoEmpty(node *dequeNode[T]) {
