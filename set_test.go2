@@ -14,8 +14,7 @@ const addsCount = 3000
 func TestNewSet(t *testing.T) {
 	s := NewSet[int]()
 
-	checkSize(s, 0, t)
-	checkIsEmpty(s, true, t)
+	checkSet[int](s, 0, true, t)
 }
 
 func TestAdd(t *testing.T) {
@@ -96,8 +95,8 @@ func checkSet[T comparable](s *Set[T], size int, isEmpty bool, t *testing.T) {
 }
 
 func checkSize[T comparable](s *Set[T], size int, t *testing.T) {
-	if size != s.Size() {
-		t.Errorf("Expected set size %d, got %d", size, s.Size())
+	if size != s.Len() {
+		t.Errorf("Expected set size %d, got %d", size, s.Len())
 	}
 }
 
