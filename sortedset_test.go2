@@ -1,0 +1,117 @@
+// Copyright 2020. The GTL Authors. All rights reserved.
+// https://github.com/modern-dev/gtl
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+
+package gtl
+
+import (
+	"testing"
+)
+
+const insertsCount = 3000
+
+func sortedSetIntComparator(a, b int) int {
+	return a - b
+}
+
+func TestNewSortedSet(t *testing.T) {
+	s := NewSortedSet[int](sortedSetIntComparator)
+
+	checkSortedSet[int](s, 0, true, t)
+}
+
+func TestSortedSetAdd(t *testing.T) {
+	s := NewSortedSet[int](sortedSetIntComparator)
+
+	checkSortedSet[int](s, 0, true, t)
+	for i := 0; i < insertsCount; i++ {
+		s.Add(i)
+		checkSortedSet[int](s, i+1, false, t)
+	}
+}
+
+func TestSortedSetIsEmpty(t *testing.T) {
+	s := NewSortedSet[int](sortedSetIntComparator)
+
+	checkSortedSetIsEmpty[int](s, true, t)
+
+	s.Add(1)
+	s.Add(42)
+
+	checkSortedSetIsEmpty[int](s, false, t)
+}
+
+func TestSortedSetNotEmpty(t *testing.T) {
+	s := NewSortedSet[int](sortedSetIntComparator)
+
+	checkSortedSetNotEmpty[int](s, false, t)
+
+	s.Add(0)
+	s.Add(35)
+
+	checkSortedSetNotEmpty[int](s, true, t)
+}
+
+func TestSortedSetContains(t *testing.T) {
+	s := NewSortedSet[int](sortedSetIntComparator)
+
+	checkSortedSet[int](s, 0, true, t)
+
+	for i := 0; i < insertsCount/2; i = i + 2 {
+		s.Add(i)
+
+		if s.Contains(i) != true {
+			t.Errorf("Expected set to contain %d", i)
+		}
+
+		if s.Contains(i+1) == true {
+			t.Errorf("Expected set to not contain %d", i+1)
+		}
+	}
+}
+
+func TestSortedSetDelete(t *testing.T) {
+	s := NewSortedSet[int](sortedSetIntComparator)
+
+	for i := 0; i < insertsCount; i++ {
+		s.Add(i)
+	}
+
+	checkSortedSet[int](s, insertsCount, false, t)
+
+	for i := 0; i < insertsCount; i++ {
+		checkSortedSet[int](s, insertsCount-i, false, t)
+		s.Delete(i)
+	}
+
+	checkSortedSet[int](s, 0, true, t)
+
+	for i := 0; i < insertsCount; i++ {
+		checkSortedSet[int](s, 0, true, t)
+		s.Delete(i)
+	}
+}
+
+func checkSortedSet[T comparable](s *SortedSet[T], size int, isEmpty bool, t *testing.T) {
+	checkSortedSetSize(s, size, t)
+	checkSortedSetIsEmpty(s, isEmpty, t)
+}
+
+func checkSortedSetSize[T comparable](s *SortedSet[T], size int, t *testing.T) {
+	if size != s.Len() {
+		t.Errorf("Expected set size %d, got %d", size, s.Len())
+	}
+}
+
+func checkSortedSetIsEmpty[T comparable](s *SortedSet[T], isEmpty bool, t *testing.T) {
+	if isEmpty != s.IsEmpty() {
+		t.Errorf("Expected IsEmpty to be %v, got %v", isEmpty, s.IsEmpty())
+	}
+}
+
+func checkSortedSetNotEmpty[T comparable](s *SortedSet[T], notEmpty bool, t *testing.T) {
+	if notEmpty != s.NotEmpty() {
+		t.Errorf("Expected NotEmpty to be %v, got %v", notEmpty, s.NotEmpty())
+	}
+}

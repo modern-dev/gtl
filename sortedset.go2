@@ -1,0 +1,59 @@
+package gtl
+
+// SortedSet is ordered set based on red-black tree
+// It can contain comparable elements only
+type SortedSet[T any] struct {
+	t *Tree[T]
+}
+
+// NewSortedSet Constructs new SortedSet with given comparator
+// which will be used for elements ordering.
+func NewSortedSet[T any](comparator func(a, b T) int) *SortedSet[T] {
+	return &SortedSet[T]{t: NewTree[T](comparator)}
+}
+
+// Len returns the number of elements in the container.
+// Complexity - O(1).
+func (s *SortedSet[T]) Len() int {
+	return s.t.Len()
+}
+
+// IsEmpty checks if there are elements in the Set.
+// Complexity - O(1).
+// Returns true if the set is empty, false otherwise.
+func (s *SortedSet[T]) IsEmpty() bool {
+	return s.Len() == 0
+}
+
+// NotEmpty checks if there are no elements in the SortedSet.
+// Complexity - O(1).
+// Returns true if there are elements in the set, false otherwise.
+func (s *SortedSet[T]) NotEmpty() bool  {
+	return !s.IsEmpty()
+}
+
+// Add inserts the element into the SortedSet.
+// Has no effect if the element already exist.
+// Complexity - O(1).
+func (s *SortedSet[T]) Add(element T)  {
+	if _, exist := s.t.Search(element); exist {
+		return
+	}
+
+	s.t.Insert(element)
+}
+
+// Contains checks if SortedSet contains given element.
+// Complexity - O(1).
+// returns true if SortedSet includes the element, false otherwise.
+func (s *SortedSet[T]) Contains(element T) bool {
+	_, contains := s.t.Search(element)
+	return contains
+}
+
+// Delete deletes the element from set if it contains an element
+// does nothing otherwise.
+// Complexity - O(1).
+func (s *SortedSet[T]) Delete(element T)  {
+	s.t.Delete(element)
+}

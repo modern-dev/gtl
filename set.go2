@@ -16,9 +16,9 @@ func NewSet[T comparable]() *Set[T] {
 	return &Set[T]{table: map[T]bool{}}
 }
 
-// Size returns the number of elements in the container.
+// Len returns the number of elements in the container.
 // Complexity - O(1).
-func (s *Set[T]) Size() int {
+func (s *Set[T]) Len() int {
 	return len(s.table)
 }
 
@@ -26,7 +26,7 @@ func (s *Set[T]) Size() int {
 // Complexity - O(1).
 // Returns true if the set is empty, false otherwise.
 func (s *Set[T]) IsEmpty() bool {
-	return s.Size() == 0
+	return s.Len() == 0
 }
 
 // NotEmpty checks if there are no elements in Set.
