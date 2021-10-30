@@ -1,33 +1,23 @@
-package gtl
+// Copyright 2020. The GTL Authors. All rights reserved.
+// https://github.com/modern-dev/gtl
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+
+package rbtree
 
 import (
-	"reflect"
-	"sort"
+	"constraints"
 	"testing"
 )
 
-var intComparator = func(a, b int) int { return a - b }
-
-var floatComparator = func(a, b float64) int {
-	if a > b {
-		return 1
-	}
-
-	if a < b {
-		return -1
-	}
-
-	return 0
-}
-
 func TestNewTree(t *testing.T) {
-	tree := NewTree[int](intComparator)
+	tree := NewRBTree[int](false)
 
 	assertTreeSize(tree, 0, t)
 }
 
 func TestTreeLen(t *testing.T) {
-	tree := NewTree[int](intComparator)
+	tree := NewRBTree[int](false)
 
 	assertTreeSize(tree, 0, t)
 
@@ -41,23 +31,18 @@ func TestTreeLen(t *testing.T) {
 	assertTreeSize(tree, len(items), t)
 }
 
-func TestTreeInsert(t *testing.T) {
-	runTreeInsert[int](intComparator, []int{5, 3, 1, 2, 4, 12, 10, 42, 13}, t)
-	runTreeInsert[float64](floatComparator, []float64{4, 12, 10, 32, 51, 25, 14, 4, 3}, t)
-}
-
 func TestTreeSearch(t *testing.T) {
-	runTreeSearch[int](intComparator, []int{5, 3, 1, 2, 4, 12, 10, 42, 13}, []int{0, 6, 11, 17, 18}, t)
+	runTreeSearch[int]([]int{5, 3, 1, 2, 4, 12, 10, 42, 13}, []int{0, 6, 11, 17, 18}, t)
 
-	runTreeSearch[float64](floatComparator, []float64{4, 12, 10, 32, 51, 25, 14, 4, 3}, []float64{0, 1, 5, 7, 13, 33}, t)
+	runTreeSearch[float64]([]float64{4, 12, 10, 32, 51, 25, 14, 4, 3}, []float64{0, 1, 5, 7, 13, 33}, t)
 }
 
 func TestTreeInorder(t *testing.T) {
 	elements1 := []int{5, 3, 1, 2, 4, 12, 10, 42, 13}
-	tree1 := treeFromSlice[int](intComparator, elements1)
+	tree1 := treeFromSlice[int](elements1)
 
 	elements2 := []float64{4, 12, 10, 32, 51, 25, 14, 4, 3}
-	tree2 := treeFromSlice[float64](floatComparator, elements2)
+	tree2 := treeFromSlice[float64](elements2)
 
 	assertTreeSize(tree1, len(elements1), t)
 	assertTreeSize(tree2, len(elements2), t)
@@ -65,10 +50,10 @@ func TestTreeInorder(t *testing.T) {
 
 func TestTreeMax(t *testing.T) {
 	maxInt := 412
-	intTree := treeFromSlice[int](intComparator, []int{25, 12, 35, 14, 52, 15, 235, 51, 2, 124, 5, 235, maxInt, 55})
+	intTree := treeFromSlice[int]([]int{25, 12, 35, 14, 52, 15, 235, 51, 2, 124, 5, 235, maxInt, 55})
 
 	maxFloat := 321.512
-	floatTree := treeFromSlice[float64](floatComparator, []float64{10.5, 25, 12, 24.52, maxFloat, 33.42, 52.55})
+	floatTree := treeFromSlice[float64]([]float64{10.5, 25, 12, 24.52, maxFloat, 33.42, 52.55})
 
 	if intTree.Max() != maxInt {
 		t.Errorf("Max() should return max value in tree. Got %v, expected %v", intTree.Max(), maxInt)
@@ -81,10 +66,10 @@ func TestTreeMax(t *testing.T) {
 
 func TestTreeMin(t *testing.T) {
 	minInt := 2
-	intTree := treeFromSlice[int](intComparator, []int{25, 12, 35, 14, 52, 15, 235, 51, minInt, 124, 5, 235, 55})
+	intTree := treeFromSlice[int]([]int{25, 12, 35, 14, 52, 15, 235, 51, minInt, 124, 5, 235, 55})
 
 	minFloat := 1.111
-	floatTree := treeFromSlice[float64](floatComparator, []float64{10.5, 25, 12, 24.52, minFloat, 33.42, 52.55})
+	floatTree := treeFromSlice[float64]([]float64{10.5, 25, 12, 24.52, minFloat, 33.42, 52.55})
 
 	if intTree.Min() != minInt {
 		t.Errorf("Min() should return min value in tree. Got %v, expected %v", intTree.Min(), minInt)
@@ -97,7 +82,7 @@ func TestTreeMin(t *testing.T) {
 
 func TestTreeDelete(t *testing.T) {
 	items := []int{3, 2, 5, 7, 4, 1, 5, 6, 2}
-	tree := treeFromSlice[int](intComparator, items)
+	tree := treeFromSlice[int](items)
 
 	cases := []struct {
 		item                   int
@@ -113,7 +98,7 @@ func TestTreeDelete(t *testing.T) {
 	runTreeDelete[int](tree, cases, t)
 
 	floatItems := []float64{0.25, 52.3, 52, 12.22, 31, 16, 22.7, 11.5, 12.22, 12.11}
-	floatTree := treeFromSlice[float64](floatComparator, floatItems)
+	floatTree := treeFromSlice[float64](floatItems)
 
 	floatCases := []struct {
 		item                   float64
@@ -129,8 +114,8 @@ func TestTreeDelete(t *testing.T) {
 	runTreeDelete[float64](floatTree, floatCases, t)
 }
 
-func runTreeSearch[T any](comparator func(T, T) int, existingElements, notExistingElements []T, t *testing.T) {
-	tree := treeFromSlice[T](comparator, existingElements)
+func runTreeSearch[T constraints.Ordered](existingElements, notExistingElements []T, t *testing.T) {
+	tree := treeFromSlice[T](existingElements)
 
 	for _, el := range existingElements {
 		assertTreeValueSearch[T](tree, el, true, t)
@@ -141,39 +126,20 @@ func runTreeSearch[T any](comparator func(T, T) int, existingElements, notExisti
 	}
 }
 
-func runTreeInsert[T any](comparator func(a, b T) int, values []T, t *testing.T) {
-	tree := NewTree[T](comparator)
-
-	for _, el := range values {
-		tree.Insert(el)
-	}
-
-	assertTreeSize(tree, len(values), t)
-
-	inorder := tree.Inorder()
-	sort.Slice(values, func(i, j int) bool {
-		return comparator(values[i], values[j]) < 0
-	})
-
-	if !reflect.DeepEqual(inorder, values) {
-		t.Errorf("Tree elements are not sorted. Tree inorder = %v, sorted values = %v", inorder, values)
-	}
-}
-
-func runTreeDelete[T any](tree *Tree[T], cases []struct {
+func runTreeDelete[T comparable](tree *RBTree[T], cases []struct {
 	item                   T
 	shouldExistAfterDelete bool
 	size                   int
 }, t *testing.T) {
 	for _, c := range cases {
-		tree.Delete(c.item)
+		tree.Erase(c.item)
 		assertTreeValueSearch[T](tree, c.item, c.shouldExistAfterDelete, t)
 		assertTreeSize(tree, c.size, t)
 	}
 }
 
-func treeFromSlice[T any](comparator func(T, T) int, elements []T) *Tree[T] {
-	tree := NewTree[T](comparator)
+func treeFromSlice[T constraints.Ordered](elements []T) *RBTree[T] {
+	tree := NewRBTree[T](false)
 
 	for _, el := range elements {
 		tree.Insert(el)
@@ -182,14 +148,14 @@ func treeFromSlice[T any](comparator func(T, T) int, elements []T) *Tree[T] {
 	return tree
 }
 
-func assertTreeSize[T any](tree *Tree[T], expected int, t *testing.T) {
-	if expected != tree.Len() {
-		t.Errorf("Expected tree Len() to be %d, got %d", expected, tree.Len())
+func assertTreeSize[T comparable](tree *RBTree[T], expected int, t *testing.T) {
+	if expected != tree.Size() {
+		t.Errorf("Expected tree Len() to be %d, got %d", expected, tree.Size())
 	}
 }
 
-func assertTreeValueSearch[T](tree *Tree[T], value T, expected bool, t *testing.T) {
-	if _, exist := tree.Search(value); exist != expected {
+func assertTreeValueSearch[T comparable](tree *RBTree[T], value T, expected bool, t *testing.T) {
+	if _, exist := tree.Find(value); exist != expected {
 		t.Errorf("Search test failed for element %v. Got %v, expected %v", value, exist, expected)
 	}
 }

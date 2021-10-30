@@ -3,7 +3,7 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-package gtl
+package union_find
 
 import (
 	"sort"
@@ -55,7 +55,7 @@ func earliestAcq(logs [][]int, N int) int {
 	* Each log represents the time in which two different people became friends.  Friendship is symmetric: if A is friends with B, then B is friends with A.
 	* Let's say that person A is acquainted with person B if A is friends with B, or A is a friend of someone acquainted with B.
 	* Return the earliest time for which every person became acquainted with every other person. Return -1 if there is no such earliest time.
-	*/
+	 */
 
 	ds := NewDisjointSet(N)
 

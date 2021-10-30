@@ -3,31 +3,35 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-package gtl
+package vector
 
-type Vector[T any] []T
+type Vector[T any] struct {
+	ar []T
+}
+
+func NewVector[T any]() *Vector[T] {
+	return &Vector[T]{
+		[]T{},
+	}
+}
 
 // At returns a reference to the element at specified location pos, with bounds checking.
 // If pos is not within the range of the container, a panic is thrown.
 // Complexity - O(1).
 func (v *Vector[T]) At(pos int) T {
-	if pos < 0 || pos >= v.Size() {
-		panic(OutOfRangeError)
-	}
-
-	return (*v)[pos]
+	return v.ar[pos]
 }
 
 // PushBack appends the given element value to the end of the container.
 // Complexity - amortized constant e.g. O(1).
 func (v *Vector[T]) PushBack(item T) {
-	*v = append(*v, item)
+	v.ar = append(v.ar, item)
 }
 
 // Size returns the number of elements in the container.
 // Complexity - O(1).
 func (v *Vector[T]) Size() int {
-	return len(*v)
+	return len(v.ar)
 }
 
 // Empty checks if the container has no elements.
@@ -39,27 +43,27 @@ func (v *Vector[T]) Empty() bool {
 // Capacity returns the number of elements that the container has currently allocated space for.
 // Complexity - O(1).
 func (v *Vector[T]) Capacity() int {
-	return cap(*v)
+	return cap(v.ar)
 }
 
 // Front returns a reference to the first element in the container.
 // Calling Front on an empty container is undefined.
 // Complexity - O(1).
 func (v *Vector[T]) Front() T {
-	return (*v)[0]
+	return v.ar[0]
 }
 
 // Back returns a reference to the last element in the container.
 // Calling Back on an empty container causes undefined behavior.
 // Complexity - O(1).
 func (v *Vector[T]) Back() T {
-	return (*v)[v.Size() - 1]
+	return v.ar[v.Size()-1]
 }
 
 func (v *Vector[T]) PopBack() T {
 	res := v.Back()
 
-	*v = (*v)[:v.Size() - 1]
+	v.ar = v.ar[:v.Size()-1]
 
 	return res
 }

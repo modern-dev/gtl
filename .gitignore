@@ -26,5 +26,5 @@ _testmain.go
 .idea
 .DS_Store
 
-# Ignore auto-generated .go files
-*.go
+# Ignore auto-generated .go2 files
+*.go2
