@@ -3,14 +3,14 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-package gtl
+package union_find
 
 type DisjointSet struct {
-	size int
+	size         int
 	rank, parent []int
 }
 
-// NewDisjointSet returns an object representing a set containing n element.
+// NewDisjointSet returns an object representing a unordered_set containing n element.
 func NewDisjointSet(n int) *DisjointSet {
 	inst := &DisjointSet{
 		n,
@@ -25,7 +25,7 @@ func NewDisjointSet(n int) *DisjointSet {
 	return inst
 }
 
-// Len returns the size of the disjoint set.
+// Len returns the size of the disjoint unordered_set.
 // Complexity - O(1).
 func (this *DisjointSet) Len() int {
 	return this.size
@@ -41,7 +41,7 @@ func (this *DisjointSet) Find(x int) int {
 	return this.parent[x]
 }
 
-// Union merges the sets represented by x node and the y node into a single set.
+// Union merges the sets represented by x node and the y node into a single unordered_set.
 // Returns whether or not the nodes were disjoint before the union operation (i.e. if the operation had an effect).
 // Complexity - O(α(n)), where α is the inverse Ackermann function.
 func (this *DisjointSet) Union(x, y int) bool {

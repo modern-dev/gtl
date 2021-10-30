@@ -1,11 +1,11 @@
-// Copyright 2021. The GTL Authors. All rights reserved.
+// Copyright 2020. The GTL Authors. All rights reserved.
 // https://github.com/modern-dev/gtl
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
 // See the implementation details https://www.hackerearth.com/practice/notes/binary-indexed-tree-or-fenwick-tree/
 
-package gtl
+package bit
 
 type BIT struct {
 	tree []int

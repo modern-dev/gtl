@@ -3,9 +3,11 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-package gtl
+package bit
 
-import "testing"
+import (
+	"testing"
+)
 
 const MOD = 1e9 + 7
 
@@ -20,9 +22,9 @@ func TestNewBIT(t *testing.T) {
 
 func TestLeetcode1649(t *testing.T) {
 	tests := []struct {
-		name string
+		name         string
 		instructions []int
-		expected int
+		expected     int
 	}{
 		{"Example 1", []int{1, 5, 6, 2}, 1},
 		{"Example 2", []int{1, 2, 3, 6, 5, 4}, 3},
@@ -58,7 +60,7 @@ func createSortedArray(instructions []int) int {
 	ans, n, bit := 0, len(instructions), NewBIT(100002)
 
 	for i := 0; i < n; i++ {
-		lsum, rsum := bit.Query(instructions[i] - 1), i - bit.Query(instructions[i])
+		lsum, rsum := bit.Query(instructions[i]-1), i-bit.Query(instructions[i])
 		ans += min(lsum, rsum)
 		ans %= MOD
 		bit.Update(instructions[i], 1)

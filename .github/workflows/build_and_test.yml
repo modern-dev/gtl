@@ -13,11 +13,13 @@ on:
 jobs:
   build_test:
     runs-on: ubuntu-latest
-    container: virtyaluk/go2go:latest
+    container: golang:1.17.2
     steps:
       - uses: actions/checkout@v2
 
       - name: Run build & test
         run: |
-          go2 build
-          go2 test
+          go install golang.org/dl/gotip@latest
+          gotip download
+          gotip test ./containers/*/ -v
+          gotip test ./utility -v
