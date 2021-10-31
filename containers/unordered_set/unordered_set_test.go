@@ -11,7 +11,7 @@ import (
 
 const addsCount = 3000
 
-func TestNewSet(t *testing.T) {
+func TestNewUnorderedSet(t *testing.T) {
 	s := NewUnorderedSet[int]()
 
 	checkSize(s, 0, t)
@@ -21,29 +21,29 @@ func TestNewSet(t *testing.T) {
 func TestInsert(t *testing.T) {
 	s := NewUnorderedSet[int]()
 
-	checkSet[int](s, 0, true, t)
+	checkSet(s, 0, true, t)
 
 	for i := 0; i < addsCount; i++ {
 		s.Insert(i)
-		checkSet[int](s, i+1, false, t)
+		checkSet(s, i+1, false, t)
 	}
 }
 
 func TestEmpty(t *testing.T) {
 	s := NewUnorderedSet[int]()
 
-	checkEmpty[int](s, true, t)
+	checkEmpty(s, true, t)
 
 	s.Insert(1)
 	s.Insert(42)
 
-	checkEmpty[int](s, false, t)
+	checkEmpty(s, false, t)
 }
 
 func TestContains(t *testing.T) {
 	s := NewUnorderedSet[int]()
 
-	checkSet[int](s, 0, true, t)
+	checkSet(s, 0, true, t)
 
 	for i := 0; i < addsCount/2; i = i + 2 {
 		s.Insert(i)
@@ -65,19 +65,33 @@ func TestErase(t *testing.T) {
 		s.Insert(i)
 	}
 
-	checkSet[int](s, addsCount, false, t)
+	checkSet(s, addsCount, false, t)
 
 	for i := 0; i < addsCount; i++ {
-		checkSet[int](s, addsCount-i, false, t)
+		checkSet(s, addsCount-i, false, t)
 		s.Erase(i)
 	}
 
-	checkSet[int](s, 0, true, t)
+	checkSet(s, 0, true, t)
 
 	for i := 0; i < addsCount; i++ {
-		checkSet[int](s, 0, true, t)
+		checkSet(s, 0, true, t)
 		s.Erase(i)
 	}
+}
+
+func TestClear(t *testing.T) {
+	s := NewUnorderedSet[int]()
+
+	for i := 0; i < addsCount; i++ {
+		s.Insert(i)
+	}
+
+	checkSet(s, addsCount, false, t)
+
+	s.Clear()
+
+	checkEmpty(s, true, t)
 }
 
 func checkSet[T comparable](s *UnorderedSet[T], size int, isEmpty bool, t *testing.T) {
@@ -87,7 +101,7 @@ func checkSet[T comparable](s *UnorderedSet[T], size int, isEmpty bool, t *testi
 
 func checkSize[T comparable](s *UnorderedSet[T], size int, t *testing.T) {
 	if size != s.Size() {
-		t.Errorf("Expected unordered_set size %d, got %d", size, s.Size())
+		t.Errorf("Expected UnorderedSet size %d, got %d", size, s.Size())
 	}
 }
 

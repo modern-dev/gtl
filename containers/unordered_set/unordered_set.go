@@ -5,51 +5,66 @@
 
 package unordered_set
 
-// UnorderedSet is unordered unordered_set based on standard map
-// It can contain comparable elements only
-type UnorderedSet[T comparable] struct {
-	table map[T]bool
-}
+import (
+	"github.com/modern-dev/gtl/containers/linked_hash_map"
+)
 
+type (
+	// UnorderedSet is unordered set based on linked_hash_map.LinkedHashMap.
+	// It can contain comparable elements only.
+	UnorderedSet[T comparable] struct {
+		lhm *linked_hash_map.LinkedHashMap[T, interface{}]
+	}
+)
+
+// NewUnorderedSet TODO
 func NewUnorderedSet[T comparable]() *UnorderedSet[T] {
 	return &UnorderedSet[T]{
-		make(map[T]bool),
+		linked_hash_map.NewLinkedHashMap[T, interface{}](false),
 	}
 }
 
+/* Capacity members */
+
+// Empty checks if there are elements in UnorderedSet.
+// Complexity — constant.
+// Returns true if the UnorderedSet is empty, false otherwise.
+func (us *UnorderedSet[T]) Empty() bool {
+	return us.lhm.Empty()
+}
+
 // Size returns the number of elements in the container.
-// Complexity - O(1).
-func (s *UnorderedSet[T]) Size() int {
-	return len(s.table)
+// Complexity — constant.
+func (us *UnorderedSet[T]) Size() int {
+	return us.lhm.Size()
 }
 
-// Empty checks if there are elements in Set.
-// Complexity - O(1).
-// Returns true if the unordered_set is empty, false otherwise.
-func (s *UnorderedSet[T]) Empty() bool {
-	return s.Size() == 0
+/* Modifiers members */
+
+// Clear erases all elements from the container. After this call, Size() returns zero.
+// Complexity — linear in the size of the container.
+func (us *UnorderedSet[T]) Clear() {
+	us.lhm.Clear()
 }
 
-// Insert inserts element into Set.
-// Complexity - O(1).
-func (s *UnorderedSet[T]) Insert(item T) {
-	s.table[item] = true
-}
-
-// Contains checks if Set contains given element.
-// Complexity - O(1).
-// returns true if Set includes the element, false otherwise.
-func (s *UnorderedSet[T]) Contains(item T) bool {
-	_, exists := s.table[item]
-
-	return exists
+// Insert inserts element into UnorderedSet.
+// Complexity — average case - O(1), worst case O(Size()).
+func (us *UnorderedSet[T]) Insert(item T) {
+	us.lhm.Insert(item, nil)
 }
 
 // Erase deletes the element from unordered_set if it contains an element
 // does nothing otherwise.
-// Complexity - O(1).
-func (s *UnorderedSet[T]) Erase(item T) {
-	if s.Contains(item) {
-		delete(s.table, item)
-	}
+// Complexity — constant.
+func (us *UnorderedSet[T]) Erase(item T) {
+	us.lhm.Erase(item)
+}
+
+/* Lookup members */
+
+// Contains checks if UnorderedSet contains given element.
+// Complexity — constant.
+// Returns true if UnorderedSet includes the element, false otherwise.
+func (us *UnorderedSet[T]) Contains(item T) bool {
+	return us.lhm.Contains(item)
 }
